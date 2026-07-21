@@ -65,7 +65,6 @@ def page_shell(config: dict, title: str, description: str, canonical: str, body:
   </header>
   <main>{body}</main>
   <footer>
-    <p>{esc(config["commercial_disclosure"])} &middot; Keine bezahlte Pinterest-Werbung.</p>
     <p>&copy; {datetime.now().year} {esc(config["author"])}</p>
   </footer>
 </body>
@@ -89,7 +88,6 @@ def render_item(config: dict, item: dict) -> str:
     body = f"""
 <article class="recipe">
   <div class="recipe-copy">
-    <p class="eyebrow">{esc(config["commercial_disclosure"])}</p>
     <h1>{esc(item["title"])}</h1>
     <p class="lead">{esc(item["description"])}</p>
     {facts_html}
@@ -125,10 +123,9 @@ def render_index(config: dict, items: list[dict]) -> str:
     cards_html = "".join(cards) if cards else "<p>Die erste Rezeptidee erscheint in Kuerze.</p>"
     body = f"""
 <section class="hero">
-  <div><p class="eyebrow">{esc(config["commercial_disclosure"])}</p><h1>Einfach. Knusprig. Airfryer.</h1>
+  <div><h1>Einfach. Knusprig. Airfryer.</h1>
   <p>{esc(config["description"])}</p>
   <a class="cta" href="{esc(config["amazon_url"])}" rel="nofollow sponsored">140 Rezepte im Buch entdecken</a></div>
-  <div class="hero-badge">0 EUR<br><span>Werbebudget</span></div>
 </section>
 <section class="section"><h2>Neue Rezeptideen</h2><div class="cards">{cards_html}</div></section>
 """
@@ -142,7 +139,7 @@ def render_privacy(config: dict) -> str:
   <h1>Datenschutzhinweise</h1>
   <p>Diese statische Website setzt keine Cookies ein, verwendet keine Formulare und bindet keine externen Analyse- oder Werbedienste ein.</p>
   <p>Beim Aufruf verarbeitet der Hosting-Anbieter technisch notwendige Serverdaten. Beim Klick auf einen Amazon-Link gelten die Datenschutzbestimmungen von Amazon.</p>
-  <p>Die gekennzeichneten Links bewerben ein eigenes Buch. Es werden auf dieser Website keine Zahlungs- oder Kundendaten verarbeitet.</p>
+  <p>Die Links f&uuml;hren zu den jeweiligen Buchangeboten bei Amazon. Auf dieser Website werden keine Zahlungs- oder Kundendaten verarbeitet.</p>
 </article>
 """
     return page_shell(config, "Datenschutz", "Datenschutzhinweise der Website", config["base_url"] + "/datenschutz.html", body)
@@ -164,7 +161,7 @@ def render_feed(config: dict, items: list[dict]) -> bytes:
         ET.SubElement(node, "title").text = item["title"]
         ET.SubElement(node, "link").text = canonical
         ET.SubElement(node, "guid", {"isPermaLink": "true"}).text = canonical
-        ET.SubElement(node, "description").text = item["description"] + " " + config["commercial_disclosure"] + "."
+        ET.SubElement(node, "description").text = item["description"]
         ET.SubElement(node, "pubDate").text = format_datetime(parse_time(item["publish_at"]))
         ET.SubElement(node, "{http://search.yahoo.com/mrss/}content", {"url": image, "medium": "image"})
         ET.SubElement(node, "{http://search.yahoo.com/mrss/}title").text = item["title"]

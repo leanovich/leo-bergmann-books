@@ -13,7 +13,7 @@ Public static author site with a Pinterest-compatible RSS feed. The repository c
 
 The intended repository is `leanovich/leo-bergmann-books`. Configure GitHub Pages to publish from the `docs` directory on the `main` branch.
 
-The workflow rebuilds the site every day at 03:15 UTC. It adds only content whose `publish_at` timestamp has been reached. Pinterest can then import the feed from:
+The workflow checks newly due content at 03:15 UTC and 14:15 UTC. It adds only content whose `publish_at` timestamp has been reached. Pinterest can then import the feed from:
 
 `https://leanovich.github.io/leo-bergmann-books/feed.xml`
 
@@ -23,4 +23,4 @@ Before connecting the feed, claim the website in Pinterest. Every feed item link
 
 - No account passwords, tokens, customer data, or private catalog files belong in this repository.
 - The site uses no cookies and no external analytics.
-- The zero-euro advertising lock remains unchanged.
+- Internal campaign state, budgets, credentials, and operational notes must never be rendered on the public website or RSS feed.

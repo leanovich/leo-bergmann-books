@@ -52,8 +52,18 @@ class SiteBuildTest(unittest.TestCase):
         )
         self.assertEqual(parsedate_to_datetime(root.findtext("./channel/lastBuildDate")), newest_item)
 
-    def test_public_output_contains_no_secrets(self):
-        forbidden = ("credentials.vault", "password", "api_key", "access_token", "secret_key")
+    def test_public_output_contains_no_internal_or_secret_markers(self):
+        forbidden = (
+            "credentials.vault",
+            "password",
+            "api_key",
+            "access_token",
+            "secret_key",
+            "werbung f",
+            "0 eur",
+            "werbebudget",
+            "keine bezahlte pinterest-werbung",
+        )
         for path in DOCS.rglob("*"):
             if path.is_file() and path.suffix.lower() in {".html", ".xml", ".txt", ".css", ""}:
                 text = path.read_text(encoding="utf-8").lower()
