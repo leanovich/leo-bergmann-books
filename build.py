@@ -148,7 +148,7 @@ def render_privacy(config: dict) -> str:
     return page_shell(config, "Datenschutz", "Datenschutzhinweise der Website", config["base_url"] + "/datenschutz.html", body)
 
 
-def render_feed(config: dict, items: list[dict], now: datetime) -> bytes:
+def render_feed(config: dict, items: list[dict]) -> bytes:
     ET.register_namespace("media", "http://search.yahoo.com/mrss/")
     rss = ET.Element("rss", {"version": "2.0"})
     channel = ET.SubElement(rss, "channel")
@@ -156,7 +156,8 @@ def render_feed(config: dict, items: list[dict], now: datetime) -> bytes:
     ET.SubElement(channel, "link").text = config["base_url"] + "/"
     ET.SubElement(channel, "description").text = config["rss_description"]
     ET.SubElement(channel, "language").text = "de-DE"
-    ET.SubElement(channel, "lastBuildDate").text = format_datetime(now)
+    build_date = max((parse_time(item["publish_at"]) for item in items), default=datetime(1970, 1, 1, tzinfo=timezone.utc))
+    ET.SubElement(channel, "lastBuildDate").text = format_datetime(build_date)
     for item in sorted(items, key=lambda value: parse_time(value["publish_at"]), reverse=True)[:50]:
         canonical, image = item_urls(config, item)
         node = ET.SubElement(channel, "item")
@@ -189,7 +190,7 @@ def build(now: datetime, base_url_override: str | None = None) -> None:
     for item in live:
         write(DOCS / "rezepte" / f'{item["id"]}.html', render_item(config, item))
 
-    (DOCS / "feed.xml").write_bytes(render_feed(config, live, now))
+    (DOCS / "feed.xml").write_bytes(render_feed(config, live))
     sitemap_urls = [config["base_url"] + "/", config["base_url"] + "/datenschutz.html"]
     sitemap_urls.extend(item_urls(config, item)[0] for item in live)
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'

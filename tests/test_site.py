@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import unittest
 import xml.etree.ElementTree as ET
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -43,6 +44,13 @@ class SiteBuildTest(unittest.TestCase):
             image_path = urlparse(media.attrib["url"]).path
             relative_image = image_path[len(base_path):].lstrip("/")
             self.assertTrue((DOCS / relative_image).is_file(), relative_image)
+
+    def test_feed_build_date_tracks_newest_item(self):
+        root = ET.parse(DOCS / "feed.xml").getroot()
+        newest_item = max(
+            parsedate_to_datetime(item.findtext("pubDate")) for item in root.findall("./channel/item")
+        )
+        self.assertEqual(parsedate_to_datetime(root.findtext("./channel/lastBuildDate")), newest_item)
 
     def test_public_output_contains_no_secrets(self):
         forbidden = ("credentials.vault", "password", "api_key", "access_token", "secret_key")
