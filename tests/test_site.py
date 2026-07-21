@@ -52,6 +52,11 @@ class SiteBuildTest(unittest.TestCase):
                 for marker in forbidden:
                     self.assertNotIn(marker, text, f"{marker} in {path}")
 
+    def test_pinterest_verification_tag_is_published(self):
+        index = (DOCS / "index.html").read_text(encoding="utf-8")
+        expected = f'<meta name="p:domain_verify" content="{CONFIG["pinterest_domain_verify"]}">'
+        self.assertIn(expected, index)
+
 
 if __name__ == "__main__":
     unittest.main()

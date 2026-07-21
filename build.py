@@ -40,6 +40,7 @@ def page_shell(config: dict, title: str, description: str, canonical: str, body:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="p:domain_verify" content="{esc(config["pinterest_domain_verify"])}">
   <title>{esc(title)} | {site_name}</title>
   <meta name="description" content="{esc(description)}">
   <link rel="canonical" href="{esc(canonical)}">
